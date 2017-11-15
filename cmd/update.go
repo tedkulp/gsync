@@ -43,7 +43,9 @@ to quickly create a Cobra application.`,
 			lib.GitAdd(line, hostname, repo)
 		}
 
-		lib.GitCommit(hostname, repo)
+		if lib.GitHasChangesToCommit(repo) {
+			lib.GitCommit(hostname, repo)
+		}
 	},
 }
 
