@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/tedkulp/gsync/lib"
 )
 
 // removeCmd represents the remove command
@@ -30,8 +31,30 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Args:    cobra.ExactArgs(1),
+	Aliases: []string{"rm"},
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
+		removed, err := lib.RemoveLine(filelist, args[0])
+
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+
+		if !removed && err == nil {
+			fmt.Println(args[0] + " is not being watched")
+			return
+		}
+
+		if removed && err == nil {
+			lib.GitRemove(args[0], hostname, repo)
+
+			if lib.GitHasChangesToCommit(repo) {
+				lib.GitCommit(hostname, repo)
+			}
+
+			fmt.Println("Removed: " + args[0])
+		}
 	},
 }
 

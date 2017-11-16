@@ -50,7 +50,7 @@ func GitAdd(filename string, hostname string, repoLocation string) {
 		err error
 	)
 
-	fileToAdd := filepath.Join(repoLocation, hostname, filepath.Dir(filename))
+	fileToAdd := filepath.Join(repoLocation, hostname, filename)
 	workTree := filepath.Join(repoLocation)
 	gitDir := filepath.Join(repoLocation, ".git")
 
@@ -64,6 +64,30 @@ func GitAdd(filename string, hostname string, repoLocation string) {
 
 	if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
 		fmt.Fprintln(os.Stderr, "There was an error running git add command: ", err)
+	}
+}
+
+func GitRemove(filename string, hostname string, repoLocation string) {
+	var (
+		err error
+	)
+
+	fileToRemove := filepath.Join(repoLocation, hostname, filename)
+	workTree := filepath.Join(repoLocation)
+	gitDir := filepath.Join(repoLocation, ".git")
+
+	cmdName := "git"
+	cmdArgs := []string{
+		"--work-tree=" + workTree,
+		"--git-dir=" + gitDir,
+		"rm",
+		fileToRemove,
+	}
+
+	fmt.Println(cmdArgs)
+
+	if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
+		fmt.Fprintln(os.Stderr, "There was an error running git remove command: ", err)
 	}
 }
 

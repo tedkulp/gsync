@@ -63,6 +63,9 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&filelist, "filelist", "", "list of watched files (default is $HOME/.gsync/filelist)")
 	RootCmd.PersistentFlags().StringVar(&repo, "repo", "", "location of synced git repository (default is $HOME/.gsync/repo)")
 	RootCmd.PersistentFlags().StringVar(&hostname, "hostname", "", "hostname to store this machine's data under (default is "+getHostname()+")")
+
+	viper.BindPFlag("hostname", RootCmd.PersistentFlags().Lookup("hostname"))
+	viper.SetDefault("hostname", getHostname())
 }
 
 // initConfig reads in config file and ENV variables if set.
