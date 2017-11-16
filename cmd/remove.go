@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/tedkulp/gsync/lib"
 )
 
@@ -33,6 +34,8 @@ will happen the next time update is run.`,
 	Args:    cobra.ExactArgs(1),
 	Aliases: []string{"rm"},
 	Run: func(cmd *cobra.Command, args []string) {
+		hostname := viper.GetString("hostname")
+
 		removed, err := lib.RemoveLine(filelist, args[0])
 
 		if err != nil {

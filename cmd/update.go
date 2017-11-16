@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/tedkulp/gsync/lib"
 )
 
@@ -40,13 +41,24 @@ This does the following:
 			return
 		}
 
+		hostname := viper.GetString("hostname")
+		remote := viper.GetString("remote")
+
 		for _, line := range list {
 			lib.CopyFileToRepo(line, hostname, repo)
 			lib.GitAdd(line, hostname, repo)
 		}
 
 		if lib.GitHasChangesToCommit(repo) {
+			if lib.GetHasRemote(repo, remote) {
+				lib.GitPull(repo, remote)
+			}
+
 			lib.GitCommit(hostname, repo)
+
+			if lib.GetHasRemote(repo, remote) {
+				lib.GitPush(repo, remote)
+			}
 		}
 	},
 }

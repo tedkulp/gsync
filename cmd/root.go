@@ -28,6 +28,7 @@ var cfgFile string
 var filelist string
 var repo string
 var hostname string
+var remote string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -62,10 +63,14 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gsync/config)")
 	RootCmd.PersistentFlags().StringVar(&filelist, "filelist", "", "list of watched files (default is $HOME/.gsync/filelist)")
 	RootCmd.PersistentFlags().StringVar(&repo, "repo", "", "location of synced git repository (default is $HOME/.gsync/repo)")
+	RootCmd.PersistentFlags().StringVar(&remote, "remote", "", "location of synced git repository (default is origin)")
 	RootCmd.PersistentFlags().StringVar(&hostname, "hostname", "", "hostname to store this machine's data under (default is "+getHostname()+")")
 
 	viper.BindPFlag("hostname", RootCmd.PersistentFlags().Lookup("hostname"))
 	viper.SetDefault("hostname", getHostname())
+
+	viper.BindPFlag("remote", RootCmd.PersistentFlags().Lookup("remote"))
+	viper.SetDefault("remote", "origin")
 }
 
 // initConfig reads in config file and ENV variables if set.
