@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export CGO_ENABLED=0
+go get
 for GOOS in darwin linux; do
   for GOARCH in 386 amd64; do
     echo "Building $GOOS-$GOARCH"
