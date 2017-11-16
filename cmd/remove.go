@@ -24,13 +24,12 @@ import (
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
 	Use:   "remove",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Removes a file from the watch list",
+	Long: `This removes an file from the list of watched files.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+It will remove the file from the watch list, the git repository and
+cause a commit. At the moment, it does not cause a push since this
+will happen the next time update is run.`,
 	Args:    cobra.ExactArgs(1),
 	Aliases: []string{"rm"},
 	Run: func(cmd *cobra.Command, args []string) {
