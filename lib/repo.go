@@ -83,7 +83,7 @@ func GitRemove(filename string, hostname string, repoLocation string) {
 	fmt.Println(cmdArgs)
 
 	if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
-		fmt.Fprintln(os.Stderr, "There was an error running git remove command: ", err)
+		//fmt.Fprintln(os.Stderr, "There was an error running git remove command: ", err)
 	}
 }
 

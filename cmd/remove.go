@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,27 +37,31 @@ will happen the next time update is run.`,
 	Aliases: []string{"rm"},
 	Run: func(cmd *cobra.Command, args []string) {
 		hostname := viper.GetString("hostname")
+		filename, err := filepath.Abs(args[0])
+		if err != nil {
+			fmt.Println(args[0] + " is not a valid file")
+			os.Exit(2)
+		}
 
-		removed, err := lib.RemoveLine(filelist, args[0])
-
+		removed, err := lib.RemoveLine(filelist, filename)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 
 		if !removed && err == nil {
-			fmt.Println(args[0] + " is not being watched")
-			return
+			fmt.Println(filename + " is not being watched")
+			os.Exit(1)
 		}
 
 		if removed && err == nil {
-			lib.GitRemove(args[0], hostname, repo)
+			lib.GitRemove(filename, hostname, repo)
 
 			if lib.GitHasChangesToCommit(repo) {
 				lib.GitCommit(hostname, repo)
 			}
 
-			fmt.Println("Removed: " + args[0])
+			fmt.Println("Removed: " + filename)
 		}
 	},
 }

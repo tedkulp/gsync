@@ -16,6 +16,8 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/tedkulp/gsync/lib"
@@ -31,11 +33,18 @@ It does not add it to the git repository directly, as this will happen
 the next time update is run.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		added, err := lib.AddLine(filelist, args[0])
+		filename, err := filepath.Abs(args[0])
+		if err != nil {
+			fmt.Println(args[0] + " is not a valid file")
+			os.Exit(2)
+		}
+
+		added, err := lib.AddLine(filelist, filename)
 		if added && err == nil {
-			fmt.Println("Added: " + args[0])
+			fmt.Println("Added: " + filename)
 		} else if !added && err == nil {
-			fmt.Println(args[0] + " already exists in file list")
+			fmt.Println(filename + " already exists in file list")
+			os.Exit(1)
 		}
 	},
 }
