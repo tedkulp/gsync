@@ -173,6 +173,7 @@ func GitPush(repoLocation string, remoteName string) {
 		"--git-dir=" + gitDir,
 		"push",
 		remoteName,
+		"master",
 	}
 
 	if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
@@ -194,6 +195,7 @@ func GitPull(repoLocation string, remoteName string) {
 		"--git-dir=" + gitDir,
 		"pull",
 		remoteName,
+		"master",
 	}
 
 	if _, err = exec.Command(cmdName, cmdArgs...).Output(); err != nil {
