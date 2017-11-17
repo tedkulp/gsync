@@ -8,10 +8,20 @@ import (
 	// "log"
 	"os"
 	"os/exec"
+	"os/user"
 	"syscall"
 )
 
 const defaultFailedCode = 1
+
+func IsRoot() bool {
+	user, err := user.Current()
+	if err != nil {
+		return false
+	}
+
+	return user.Uid == "0"
+}
 
 func RemoveLines(fn string, start, n int) (err error) {
 	if start < 1 {

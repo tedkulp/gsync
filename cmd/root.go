@@ -22,6 +22,8 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/tedkulp/gsync/lib"
 )
 
 var cfgFile string
@@ -79,8 +81,11 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Search in home/.gsync directory with name "config" (without extension).
-		viper.AddConfigPath(path.Join(getHomeDir(), ".gsync"))
+		if lib.IsRoot() {
+			viper.AddConfigPath("/etc/gsync")
+		} else {
+			viper.AddConfigPath(getDataDir())
+		}
 		viper.SetConfigName("config")
 	}
 
@@ -92,11 +97,11 @@ func initConfig() {
 	}
 
 	if filelist == "" {
-		filelist = path.Join(getHomeDir(), ".gsync", "filelist")
+		filelist = path.Join(getDataDir(), "filelist")
 	}
 
 	if repo == "" {
-		repo = path.Join(getHomeDir(), ".gsync", "repo")
+		repo = path.Join(getDataDir(), "repo")
 	}
 
 	if hostname == "" {
@@ -104,14 +109,19 @@ func initConfig() {
 	}
 }
 
-func getHomeDir() string {
-	home, err := homedir.Dir()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+func getDataDir() string {
+	if lib.IsRoot() {
+		return "/var/lib/gsync"
+	} else {
+		home, err := homedir.Dir()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		return path.Join(home, ".gsync")
 	}
 
-	return home
 }
 
 func getHostname() string {
