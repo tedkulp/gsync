@@ -25,27 +25,39 @@ import (
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Adds a new file to the watch list",
-	Long: `This adds a new file to the list of watched files.
+	Use:   "add <files>",
+	Short: "Adds new files to the watch list",
+	Long: `This adds new files to the list of watched files.
 
 It does not add it to the git repository directly, as this will happen
 the next time update is run.`,
-	Args: cobra.ExactArgs(1),
+	Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		filename, err := filepath.Abs(args[0])
-		if err != nil {
-			fmt.Println(args[0] + " is not a valid file")
-			os.Exit(2)
+		// Loop once and check all files
+		for _, arg := range args {
+			filename, err := filepath.Abs(arg)
+			if err != nil {
+				fmt.Println(arg + " is not a valid file. Exiting.")
+				os.Exit(2)
+			}
+
+			if info, err := os.Stat(filename); err == nil && info.IsDir() {
+				fmt.Println(arg + " is a directory. Exiting.")
+				os.Exit(2)
+			}
 		}
 
-		added, err := lib.AddLine(filelist, filename)
-		if added && err == nil {
-			fmt.Println("Added: " + filename)
-		} else if !added && err == nil {
-			fmt.Println(filename + " already exists in file list")
-			os.Exit(1)
+		// Loop again and actually add them
+		for _, arg := range args {
+			filename, err := filepath.Abs(arg)
+			added, err := lib.AddLine(filelist, filename)
+			if added && err == nil {
+				fmt.Println("Added: " + filename)
+			} else if !added && err == nil {
+				fmt.Println(filename + " already exists in file list. Skipping.")
+			}
 		}
+
 	},
 }
 
